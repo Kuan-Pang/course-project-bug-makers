@@ -2,10 +2,9 @@ package com.courseApp.courseService;
 
 import com.courseApp.constants.Constants;
 import com.courseApp.entity.Schedule;
+import com.courseApp.userService.UserRequestProcessor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -118,69 +117,116 @@ public class CourseServiceController implements ControlPresentInformation, Contr
      * @param password password
      * @return schedule list String
      */
-    @Override
-    public String PlanCourse(String username, String password) {
-        return null;
+
+    public String PlanCourse(String username, String password) throws Throwable {
 //        TODO ;)
-        ArrayList<String> result = new ArrayList<>();
-        UserDaoImpl userDao = UserDaoImpl(username, password);
-        ArrayList<String> courses = userDao.queryCourseList();
-        ArrayList<String> wishlist = userDao.queryWishList();
+        UserRequestProcessor user = new UserRequestProcessor(username, password);
+        ArrayList<String> courses = user.queryUserCourseList();
+        ArrayList<String> wishlist = user.queryUserWishList();
+        ArrayList<String> result = PlanCourseHelper(new ArrayList<>(), courses, wishlist);
+        Schedule schedule = new Schedule(result);
+        new ScheduleUpdater().updateScheduleMap(schedule);
+        user.insertSchedule(schedule);
+        return schedule.toString();
     }
 
-    public ArrayList<String> PlanCourseHelper(Schedule schedule, ArrayList<String> courses, ArrayList<String> wishlist) {
+    /**
+     *
+     * @param schedule schedule entity
+     * @param courses ArrayList of strings representing courses with section codes
+     * @param wishlist ArrayList of strings representing courses with section codes
+     * @return ArrayList of course codes
+     * @throws Throwable exceptions
+     */
+    public ArrayList<String> PlanCourseHelper(ArrayList<String> schedule, ArrayList<String> courses, ArrayList<String> wishlist) throws Throwable {
         if (courses.size() == 1 && wishlist.isEmpty()) {
             String course = courses.get(0);
-            ArrayList<String> current_sections = schedule.getSectionList();
-            ArrayList<String> new_sections = CourseDaoImpl(course).queryCourseSectionList();
+            List<String> new_sections = new CourseInformationGenerator(course).getCourseSectionList();
             for (String s : new_sections) {
-                for (String c : current_sections) {
-                    //if (conflicts(s, c)) {
-                    //  break
-                    //}
-                    //else if (c == current_sections.get(current_sections.size()) && conflicts(s, c) == false) {
-                    // return new ArrayList<String>(s)
-                    //}
-                }
-            }
-            throw new Exception(NO_EXISTING_SCHEUDULE); //Someone teach me whats wrong with this
-        }
-        else if (courses.isEmpty()) {
-            try {
-                PlanCourseHelper(schedule, wishlist, new ArrayList<String>());
-            } catch(Exception NO_EXISTING_SCHEDULE) {
-                return new ArrayList<String>();
-            } finally {
-                return PlanCourseHelper(schedule, wishlist, new ArrayList<String>());
-            }
-        }
-        else {
-            ArrayList<String> result = new ArrayList<String>();
-            String course = courses.get(0);
-            ArrayList<String> current_sections = schedule.getSectionList();
-            ArrayList<String> new_sections = CourseDaoImpl(course).queryCourseSectionList();
-            for (String s : new_sections) {
-                for (String c : current_sections) {
-                    if (conflicts(s, c)) {
+                for (String c : schedule) {
+                    if (CheckConflict(s, c)) {
                         break;
                     }
-                    if (c == current_sections.get(current_sections.size()) && conflicts(s, c) == false) {
+                    else if (Objects.equals(c, schedule.get(schedule.size() - 1)) && !CheckConflict(s, c)) {
+                        ArrayList<String> result = new ArrayList<>();
                         result.add(s);
-                    }
-                }
-                if (result.isEmpty() == false) {
-                    try {
-                        PlanCourseHelper(schedule, new ArrayList<String>(courses.subList(1, courses.size() - 1)), wishlist);
-                    } catch(Exception NO_EXISTING_SCHEDULE) {
-                        result.clear();
-                    } finally {
-                        result.addAll(PlanCourseHelper(schedule, wishlist, new ArrayList<String>()));
                         return result;
                     }
                 }
             }
             throw new Exception(NO_EXISTING_SCHEUDULE);
         }
+        else if (courses.isEmpty()) {
+            try {
+                PlanCourseHelper(schedule, wishlist, new ArrayList<>());
+            } catch(Exception NO_EXISTING_SCHEDULE) {
+                return new ArrayList<>();
+            }
+            return PlanCourseHelper(schedule, wishlist, new ArrayList<>());
+        }
+        else {
+            ArrayList<String> result = new ArrayList<>();
+            ArrayList<String> new_schedule = new ArrayList<>(schedule);
+            String course = courses.get(0);
+            List<String> new_sections = new CourseInformationGenerator(course).getCourseSectionList();
+            for (String s : new_sections) {
+                for (String c : schedule) {
+                    if (CheckConflict(s, c)) {
+                        break;
+                    }
+                    if (Objects.equals(c, schedule.get(schedule.size() - 1)) && !CheckConflict(s, c)) {
+                        result.add(s);
+                        new_schedule.add(s);
+                    }
+                }
+                if (!result.isEmpty()) {
+                    try {
+                        PlanCourseHelper(new_schedule, new ArrayList<>(courses.subList(1, courses.size() - 1)), wishlist);
+                    } catch(Exception NO_EXISTING_SCHEDULE) {
+                        result.clear();
+                    } finally {
+
+                        result.addAll(PlanCourseHelper(new_schedule, new ArrayList<>(courses.subList(1, courses.size() - 1)), wishlist));
+                    }
+                    return result;
+                }
+            }
+            throw new Exception(NO_EXISTING_SCHEUDULE);
+        }
+
+    }
+
+    /**
+     * Check if two sections occur at the same time
+     *
+     * @param section1: A section of a course
+     * @param section2: A section of a course
+     * @return True iff the sections do not have overlapping times
+     */
+    private boolean CheckConflict(String section1, String section2) throws Throwable {
+        try {
+            new CourseInformationGenerator(section1);
+            new CourseInformationGenerator(section2);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        CourseInformationGenerator cig1 = new CourseInformationGenerator(section1);
+        CourseInformationGenerator cig2 = new CourseInformationGenerator(section2);
+        Map<String, ArrayList<String>> times1 = cig1.getSectionSpecificSchedule();
+        Map<String, ArrayList<String>> times2 = cig2.getSectionSpecificSchedule();
+        for (String s : times1.keySet()) {
+            for (String t : times2.keySet()) {
+                if (Integer.valueOf(times1.get(s).get(0)) < Integer.valueOf(times2.get(t).get(0)) &&
+                        Integer.valueOf(times1.get(s).get(1)) > Integer.valueOf(times2.get(t).get(1))) {
+                    return false;
+                }
+                else if (Integer.valueOf(times1.get(s).get(0)) > Integer.valueOf(times2.get(t).get(0)) &&
+                        Integer.valueOf(times2.get(t).get(1)) > Integer.valueOf(times1.get(s).get(0))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 
