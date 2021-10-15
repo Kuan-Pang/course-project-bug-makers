@@ -199,7 +199,7 @@ public class UserRequestProcessor implements UseQueryUserData, UseLoginRegister,
      * @param schedule: New schedule to be inserted.
      * @return true iff the process is successful
      */
-    public boolean insertSchedule(Schedule schedule) {
+    public boolean insertOneSchedule(Schedule schedule) {
         UserDAO userDao = new UserDaoImpl(this.username);
         ArrayList<Schedule> res = userDao.queryScheduleList();
         res.add(schedule);

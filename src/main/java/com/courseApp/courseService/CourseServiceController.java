@@ -126,7 +126,7 @@ public class CourseServiceController implements ControlPresentInformation, Contr
         ArrayList<String> result = PlanCourseHelper(new ArrayList<>(), courses, wishlist);
         Schedule schedule = new Schedule(result);
         new ScheduleUpdater().updateScheduleMap(schedule);
-        user.insertSchedule(schedule);
+        user.insertOneSchedule(schedule);
         return schedule.toString();
     }
 
@@ -230,49 +230,49 @@ public class CourseServiceController implements ControlPresentInformation, Contr
 
 
 
-//    public static void main(String[] args) throws Throwable {
-//        ArrayList<String> th_schedule = new ArrayList<>();
-//        th_schedule.add("17:00");
-//        th_schedule.add("19:00");
-//
-//
-//        ArrayList<String> tu_schedule = new ArrayList<>();
-//        tu_schedule.add("11:00");
-//        tu_schedule.add("14:00");
-//
-//
-//        ArrayList<String> th_schedule2 = new ArrayList<>();
-//        th_schedule2.add("8:00");
-//        th_schedule2.add("9:00");
-//
-//
-//        ArrayList<String> mo_schedule2 = new ArrayList<>();
-//        mo_schedule2.add("10:00");
-//        mo_schedule2.add("11:00");
-//
-//        Map<String, ArrayList<String>> day = new HashMap<>();
-//        day.put("TH", th_schedule);
-//
-//
-//        Map<String, ArrayList<String>> day2 = new HashMap<>();
-//        day2.put("TH", th_schedule2);
-//
-//        Map<String, ArrayList<String>> day3 = new HashMap<>();
-//        day3.put("TU", tu_schedule);
-//
-//        Map<String, ArrayList<String>> day4 = new HashMap<>();
-//        day4.put("MO", mo_schedule2);
-//
-//        Map<String, Map<String, ArrayList<String>>> cad = new HashMap<>();
-//        cad.put("CSC207SLEC0101", day);
-//        cad.put("CSC108SLEC0102", day2);
-//        cad.put("MAT137YLEC0102", day3);
-//        cad.put("CSC209FLEC0102", day4);
-//
-//        Schedule schedule = new Schedule(cad);
-//        System.out.println(new CourseServiceController().getScheduleSummary(schedule));
+    public static void main(String[] args) throws Throwable {
+        ArrayList<String> th_schedule = new ArrayList<>();
+        th_schedule.add("17:00");
+        th_schedule.add("19:00");
 
-//        CourseServiceController csc = new CourseServiceController();
-//        System.out.println(csc.getSectionInformation("CSC207FLEC0101"));
-//    }
+
+        ArrayList<String> tu_schedule = new ArrayList<>();
+        tu_schedule.add("11:00");
+        tu_schedule.add("14:00");
+
+
+        ArrayList<String> th_schedule2 = new ArrayList<>();
+        th_schedule2.add("8:00");
+        th_schedule2.add("9:00");
+
+
+        ArrayList<String> mo_schedule2 = new ArrayList<>();
+        mo_schedule2.add("10:00");
+        mo_schedule2.add("11:00");
+
+        Map<String, ArrayList<String>> day = new HashMap<>();
+        day.put("TH", th_schedule);
+
+
+        Map<String, ArrayList<String>> day2 = new HashMap<>();
+        day2.put("TH", th_schedule2);
+
+        Map<String, ArrayList<String>> day3 = new HashMap<>();
+        day3.put("TU", tu_schedule);
+
+        Map<String, ArrayList<String>> day4 = new HashMap<>();
+        day4.put("MO", mo_schedule2);
+
+        Map<String, Map<String, ArrayList<String>>> cad = new HashMap<>();
+        cad.put("CSC207SLEC0101", day);
+        cad.put("CSC108SLEC0102", day2);
+        cad.put("MAT137YLEC0102", day3);
+        cad.put("CSC209FLEC0102", day4);
+
+        Schedule schedule = new Schedule(cad);
+        System.out.println(new CourseServiceController().getScheduleSummary(schedule));
+
+        CourseServiceController csc = new CourseServiceController();
+        System.out.println(csc.getSectionInformation("CSC207FLEC0101"));
+    }
 }
