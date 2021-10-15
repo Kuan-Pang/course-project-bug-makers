@@ -4,8 +4,12 @@ import com.courseApp.constants.Constants;
 import com.courseApp.entity.Schedule;
 import com.courseApp.userService.UserRequestProcessor;
 import com.courseApp.constants.Exceptions;
+import com.courseApp.userService.UserServiceController;
 
+import java.time.LocalTime;
 import java.util.*;
+
+import static com.courseApp.constants.Constants.COURSE_CODE_SECTION_FLAG;
 
 
 /**
@@ -143,13 +147,14 @@ public class CourseServiceController implements ControlPresentInformation, Contr
             String course = courses.get(0);
             List<String> new_sections = new CourseInformationGenerator(course).getCourseSectionList();
             for (String s : new_sections) {
+                s = s.replace("-", "");
                 for (String c : schedule) {
-                    if (CheckConflict(s, c)) {
+                    if (CheckConflict(course + s, c)) {
                         break;
                     }
-                    else if (Objects.equals(c, schedule.get(schedule.size() - 1)) && !CheckConflict(s, c)) {
+                    else if (Objects.equals(c, schedule.get(schedule.size() - 1)) && !CheckConflict(course + s, c)) {
                         ArrayList<String> result = new ArrayList<>();
-                        result.add(s);
+                        result.add(course + s);
                         return result;
                     }
                 }
@@ -170,23 +175,36 @@ public class CourseServiceController implements ControlPresentInformation, Contr
             String course = courses.get(0);
             List<String> new_sections = new CourseInformationGenerator(course).getCourseSectionList();
             for (String s : new_sections) {
+                s = s.replace("-", "");
                 for (String c : schedule) {
-                    if (CheckConflict(s, c)) {
+
+                    if (Objects.equals(c, schedule.get(schedule.size() - 1)) && !CheckConflict(course + s, c)) {
+                        try {
+                            new_schedule.add(course + s);
+                            PlanCourseHelper(new_schedule, new ArrayList<>(courses.subList(1, courses.size())), wishlist);
+                        } catch(Exception NO_EXISTING_SCHEDULE) {
+                            break;
+                        }
+                        result.add(course + s);
+                        new_schedule.add(course + s);
+                        result.addAll(PlanCourseHelper(new_schedule, new ArrayList<>(courses.subList(1, courses.size() - 1)), wishlist));
+                        return result;
+
+                    }
+                    else if (CheckConflict(course + s, c)) {
                         break;
                     }
-                    if (Objects.equals(c, schedule.get(schedule.size() - 1)) && !CheckConflict(s, c)) {
-                        result.add(s);
-                        new_schedule.add(s);
-                    }
                 }
-                if (!result.isEmpty()) {
+                if (schedule.isEmpty()) {
                     try {
-                        PlanCourseHelper(new_schedule, new ArrayList<>(courses.subList(1, courses.size() - 1)), wishlist);
+                        new_schedule.add(course + s);
+                        PlanCourseHelper(new_schedule, new ArrayList<>(courses.subList(1, courses.size())), wishlist);
                     } catch(Exception NO_EXISTING_SCHEDULE) {
-                        throw new Exception(Exceptions.NO_EXISTING_SCHEDULE);
-                    } finally {
-                        result.addAll(PlanCourseHelper(new_schedule, new ArrayList<>(courses.subList(1, courses.size() - 1)), wishlist));
+                        throw new Exception(NO_EXISTING_SCHEDULE);
                     }
+                    result.add(course + s);
+                    new_schedule.add(course + s);
+                    result.addAll(PlanCourseHelper(new_schedule, new ArrayList<>(courses.subList(1, courses.size() - 1)), wishlist));
                     return result;
                 }
             }
@@ -214,13 +232,12 @@ public class CourseServiceController implements ControlPresentInformation, Contr
         Map<String, ArrayList<String>> times1 = cig1.getSectionSpecificSchedule();
         Map<String, ArrayList<String>> times2 = cig2.getSectionSpecificSchedule();
         for (String s : times1.keySet()) {
-            for (String t : times2.keySet()) {
-                if (Integer.valueOf(times1.get(s).get(0)) < Integer.valueOf(times2.get(t).get(0)) &&
-                        Integer.valueOf(times1.get(s).get(1)) > Integer.valueOf(times2.get(t).get(1))) {
+            if (times2.containsKey(s)) {
+                if (LocalTime.parse(times1.get(s).get(0) + ":00").isBefore(LocalTime.parse(times2.get(s).get(0) + ":00")) &&
+                        LocalTime.parse(times1.get(s).get(1) + ":00").isAfter(LocalTime.parse(times2.get(s).get(1) + ":00"))) {
                     return false;
-                }
-                else if (Integer.valueOf(times1.get(s).get(0)) > Integer.valueOf(times2.get(t).get(0)) &&
-                        Integer.valueOf(times2.get(t).get(1)) > Integer.valueOf(times1.get(s).get(0))) {
+                } else if (LocalTime.parse(times1.get(s).get(0) + ":00").isAfter(LocalTime.parse(times2.get(s).get(0) + ":00")) &&
+                        LocalTime.parse(times2.get(s).get(1) + ":00").isAfter(LocalTime.parse(times1.get(s).get(0) + ":00"))) {
                     return false;
                 }
             }
@@ -230,7 +247,15 @@ public class CourseServiceController implements ControlPresentInformation, Contr
 
 
 
-//    public static void main(String[] args) throws Throwable {
+    public static void main(String[] args) throws Throwable {
+        UserServiceController usc = new UserServiceController();
+        usc.userClearCourseList("coursePlanningTesting");
+        usc.userClearWishList("coursePlanningTesting");
+        usc.addCourse("coursePlanningTesting", "CSC207F");
+        usc.addCourse("coursePlanningTesting", "CSC108F");
+        usc.addWish("coursePlanningTesting", "MAT137Y");
+        CourseServiceController csc = new CourseServiceController();
+        System.out.print(csc.PlanCourse("coursePlanningTesting"));
 //        ArrayList<String> th_schedule = new ArrayList<>();
 //        th_schedule.add("17:00");
 //        th_schedule.add("19:00");
@@ -274,5 +299,5 @@ public class CourseServiceController implements ControlPresentInformation, Contr
 //
 //        CourseServiceController csc = new CourseServiceController();
 //        System.out.println(csc.getSectionInformation("CSC207FLEC0101"));
-//    }
+    }
 }
