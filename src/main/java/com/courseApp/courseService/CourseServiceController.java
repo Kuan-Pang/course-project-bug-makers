@@ -183,9 +183,8 @@ public class CourseServiceController implements ControlPresentInformation, Contr
                     try {
                         PlanCourseHelper(new_schedule, new ArrayList<>(courses.subList(1, courses.size() - 1)), wishlist);
                     } catch(Exception NO_EXISTING_SCHEDULE) {
-                        result.clear();
+                        throw new Exception(Exceptions.NO_EXISTING_SCHEDULE);
                     } finally {
-
                         result.addAll(PlanCourseHelper(new_schedule, new ArrayList<>(courses.subList(1, courses.size() - 1)), wishlist));
                     }
                     return result;
