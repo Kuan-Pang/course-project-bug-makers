@@ -3,6 +3,7 @@ package com.courseApp.courseService;
 import com.courseApp.constants.Constants;
 import com.courseApp.entity.Schedule;
 import com.courseApp.userService.UserRequestProcessor;
+import com.courseApp.constants.Exceptions;
 
 import java.util.*;
 
@@ -114,13 +115,12 @@ public class CourseServiceController implements ControlPresentInformation, Contr
      * Return the planned schedule list String iff the planning is successful, otherwise, null.
      *
      * @param username username
-     * @param password password
      * @return schedule list String
+     * @throws Throwable exceptions
      */
-
-    public String PlanCourse(String username, String password) throws Throwable {
-//        TODO ;)
-        UserRequestProcessor user = new UserRequestProcessor(username, password);
+    @Override
+    public String PlanCourse(String username) throws Throwable {
+        UserRequestProcessor user = new UserRequestProcessor(username);
         ArrayList<String> courses = user.queryUserCourseList();
         ArrayList<String> wishlist = user.queryUserWishList();
         ArrayList<String> result = PlanCourseHelper(new ArrayList<>(), courses, wishlist);
@@ -154,7 +154,7 @@ public class CourseServiceController implements ControlPresentInformation, Contr
                     }
                 }
             }
-            throw new Exception(NO_EXISTING_SCHEUDULE);
+            throw new Exception(Exceptions.NO_EXISTING_SCHEDULE);
         }
         else if (courses.isEmpty()) {
             try {
@@ -191,7 +191,7 @@ public class CourseServiceController implements ControlPresentInformation, Contr
                     return result;
                 }
             }
-            throw new Exception(NO_EXISTING_SCHEUDULE);
+            throw new Exception(Exceptions.NO_EXISTING_SCHEDULE);
         }
 
     }
@@ -228,6 +228,7 @@ public class CourseServiceController implements ControlPresentInformation, Contr
         }
         return true;
     }
+
 
 
 //    public static void main(String[] args) throws Throwable {
