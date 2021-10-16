@@ -177,7 +177,6 @@ public class CourseServiceController implements ControlPresentInformation, Contr
             for (String s : new_sections) {
                 s = s.replace("-", "");
                 for (String c : schedule) {
-
                     if (Objects.equals(c, schedule.get(schedule.size() - 1)) && !CheckConflict(course + s, c)) {
                         try {
                             new_schedule.add(course + s);
@@ -187,7 +186,7 @@ public class CourseServiceController implements ControlPresentInformation, Contr
                         }
                         result.add(course + s);
                         new_schedule.add(course + s);
-                        result.addAll(PlanCourseHelper(new_schedule, new ArrayList<>(courses.subList(1, courses.size() - 1)), wishlist));
+                        result.addAll(PlanCourseHelper(new_schedule, new ArrayList<>(courses.subList(1, courses.size())), wishlist));
                         return result;
 
                     }
@@ -218,7 +217,7 @@ public class CourseServiceController implements ControlPresentInformation, Contr
      *
      * @param section1: A section of a course
      * @param section2: A section of a course
-     * @return True iff the sections do not have overlapping times
+     * @return True iff the sections have overlapping times
      */
     private boolean CheckConflict(String section1, String section2) throws Throwable {
         try {
@@ -235,27 +234,27 @@ public class CourseServiceController implements ControlPresentInformation, Contr
             if (times2.containsKey(s)) {
                 if (LocalTime.parse(times1.get(s).get(0) + ":00").isBefore(LocalTime.parse(times2.get(s).get(0) + ":00")) &&
                         LocalTime.parse(times1.get(s).get(1) + ":00").isAfter(LocalTime.parse(times2.get(s).get(1) + ":00"))) {
-                    return false;
+                    return true;
                 } else if (LocalTime.parse(times1.get(s).get(0) + ":00").isAfter(LocalTime.parse(times2.get(s).get(0) + ":00")) &&
                         LocalTime.parse(times2.get(s).get(1) + ":00").isAfter(LocalTime.parse(times1.get(s).get(0) + ":00"))) {
-                    return false;
+                    return true;
                 }
             }
         }
-        return true;
+        return false;
     }
 
 
 
-    public static void main(String[] args) throws Throwable {
-        UserServiceController usc = new UserServiceController();
-        usc.userClearCourseList("coursePlanningTesting");
-        usc.userClearWishList("coursePlanningTesting");
-        usc.addCourse("coursePlanningTesting", "CSC207F");
-        usc.addCourse("coursePlanningTesting", "CSC108F");
-        usc.addWish("coursePlanningTesting", "MAT137Y");
-        CourseServiceController csc = new CourseServiceController();
-        System.out.print(csc.PlanCourse("coursePlanningTesting"));
+//    public static void main(String[] args) throws Throwable {
+//        UserServiceController usc = new UserServiceController();
+//        usc.userClearCourseList("coursePlanningTesting");
+//        usc.userClearWishList("coursePlanningTesting");
+//        usc.addCourse("coursePlanningTesting", "CSC207F");
+//        usc.addCourse("coursePlanningTesting", "CSC108F");
+//        usc.addWish("coursePlanningTesting", "MAT137Y");
+//        CourseServiceController csc = new CourseServiceController();
+//        System.out.print(csc.PlanCourse("coursePlanningTesting"));
 //        ArrayList<String> th_schedule = new ArrayList<>();
 //        th_schedule.add("17:00");
 //        th_schedule.add("19:00");
@@ -299,5 +298,5 @@ public class CourseServiceController implements ControlPresentInformation, Contr
 //
 //        CourseServiceController csc = new CourseServiceController();
 //        System.out.println(csc.getSectionInformation("CSC207FLEC0101"));
-    }
+//    }
 }
