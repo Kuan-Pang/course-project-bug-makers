@@ -188,7 +188,6 @@ public class CourseServiceController implements ControlPresentInformation, Contr
                         new_schedule.add(course + s);
                         result.addAll(PlanCourseHelper(new_schedule, new ArrayList<>(courses.subList(1, courses.size())), wishlist));
                         return result;
-
                     }
                     else if (CheckConflict(course + s, c)) {
                         break;
@@ -210,6 +209,22 @@ public class CourseServiceController implements ControlPresentInformation, Contr
             throw new Exception(Exceptions.NO_EXISTING_SCHEDULE);
         }
 
+    }
+
+    /**
+     *
+     * @param section_list An ArrayList of strings representing sections to be formatted
+     * @return A reformatted list of sections
+     */
+    private Map<String, ArrayList<String>> FormatSectionList(ArrayList<String> section_list) {
+        Map<String, ArrayList<String>> result = new HashMap<>();
+        for (String s : section_list) {
+            s = s.replace("-", "");
+            ArrayList<String> entry = new ArrayList<>(result.get(s.substring(0, 4)));
+            entry.add(s);
+            result.put(s.substring(0, 4), entry);
+        }
+        return result;
     }
 
     /**
