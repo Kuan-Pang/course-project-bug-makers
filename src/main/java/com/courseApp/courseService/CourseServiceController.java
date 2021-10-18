@@ -127,6 +127,11 @@ public class CourseServiceController implements ControlPresentInformation, Contr
         UserRequestProcessor user = new UserRequestProcessor(username);
         ArrayList<String> courses = user.queryUserCourseList();
         ArrayList<String> wishlist = user.queryUserWishList();
+        try {
+            PlanCourseHelper(new ArrayList<>(), courses, wishlist);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         ArrayList<String> result = PlanCourseHelper(new ArrayList<>(), courses, wishlist);
         Schedule schedule = new Schedule(result);
         new ScheduleUpdater().updateScheduleMap(schedule);
