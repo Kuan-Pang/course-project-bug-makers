@@ -1,6 +1,6 @@
 package com.courseApp.userService;
 
-import com.courseApp.dao.UserDAO;
+import com.courseApp.dao.UserDaoImpl;
 import com.courseApp.dao.UserDaoImpl;
 import com.courseApp.entity.Schedule;
 import com.courseApp.entity.UserReview;
@@ -108,7 +108,7 @@ public class UserRequestProcessor implements UseQueryUserData, UseLoginRegister,
      */
     @Override
     public boolean insertOneCourse(String courseCode) {
-        UserDAO userDao = new UserDaoImpl(this.username);
+        UserDaoImpl userDao = new UserDaoImpl(this.username);
         ArrayList<String> res = userDao.queryCourseList();
         res.add(courseCode);
         return userDao.updateCourseList(res);
@@ -124,7 +124,7 @@ public class UserRequestProcessor implements UseQueryUserData, UseLoginRegister,
      */
     @Override
     public boolean insertOneWish(String courseCode) {
-        UserDAO userDao = new UserDaoImpl(this.username);
+        UserDaoImpl userDao = new UserDaoImpl(this.username);
         ArrayList<String> res = userDao.queryWishList();
         res.add(courseCode);
         userDao.updateWishList(res);
@@ -140,7 +140,7 @@ public class UserRequestProcessor implements UseQueryUserData, UseLoginRegister,
      */
     @Override
     public boolean insertOneReview(UserReview userReview) {
-        UserDAO userDao = new UserDaoImpl(this.username);
+        UserDaoImpl userDao = new UserDaoImpl(this.username);
         ArrayList<UserReview> res = userDao.queryUserReviewList();
         res.add(userReview);
         userDao.updateUserReviewList(res);
@@ -156,7 +156,7 @@ public class UserRequestProcessor implements UseQueryUserData, UseLoginRegister,
      */
     @Override
     public boolean removeOneCourse(String courseCode) {
-        UserDAO userDao = new UserDaoImpl(this.username);
+        UserDaoImpl userDao = new UserDaoImpl(this.username);
         ArrayList<String> res = userDao.queryCourseList();
         if (res.contains(courseCode)){
             res.remove(courseCode);
@@ -174,7 +174,7 @@ public class UserRequestProcessor implements UseQueryUserData, UseLoginRegister,
      */
     @Override
     public boolean removeOneReview(UserReview userReview) {
-        UserDAO userDao = new UserDaoImpl(this.username);
+        UserDaoImpl userDao = new UserDaoImpl(this.username);
         ArrayList<UserReview> res = userDao.queryUserReviewList();
         if (res.contains(userReview)){
             res.remove(userReview);
@@ -193,7 +193,7 @@ public class UserRequestProcessor implements UseQueryUserData, UseLoginRegister,
      */
     @Override
     public boolean removeOneWish(String courseCode) {
-        UserDAO userDao = new UserDaoImpl(this.username);
+        UserDaoImpl userDao = new UserDaoImpl(this.username);
         ArrayList<String> res = userDao.queryWishList();
         if (res.contains(courseCode)){
             res.remove(courseCode);
@@ -209,7 +209,7 @@ public class UserRequestProcessor implements UseQueryUserData, UseLoginRegister,
      */
     @Override
     public boolean clearCourseList() {
-        UserDAO userDao = new UserDaoImpl(this.username);
+        UserDaoImpl userDao = new UserDaoImpl(this.username);
         userDao.updateCourseList(new ArrayList<>());
         return true;
     }
@@ -221,7 +221,7 @@ public class UserRequestProcessor implements UseQueryUserData, UseLoginRegister,
      */
     @Override
     public boolean clearWishList() {
-        UserDAO userDao = new UserDaoImpl(this.username);
+        UserDaoImpl userDao = new UserDaoImpl(this.username);
         userDao.updateWishList(new ArrayList<>());
         return true;
     }
@@ -233,7 +233,7 @@ public class UserRequestProcessor implements UseQueryUserData, UseLoginRegister,
      */
     @Override
     public boolean clearScheduleList() {
-        UserDAO userDao = new UserDaoImpl(this.username);
+        UserDaoImpl userDao = new UserDaoImpl(this.username);
         return userDao.updateScheduleList(new ArrayList<>());
 
     }
@@ -246,7 +246,7 @@ public class UserRequestProcessor implements UseQueryUserData, UseLoginRegister,
      */
     @Override
     public boolean insertOneSchedule(Schedule schedule) {
-        UserDAO userDao = new UserDaoImpl(this.username);
+        UserDaoImpl userDao = new UserDaoImpl(this.username);
         ArrayList<Schedule> res = userDao.queryScheduleList();
         res.add(0, schedule);
         return userDao.updateScheduleList(res);

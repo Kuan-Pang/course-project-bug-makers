@@ -17,7 +17,7 @@ import static com.mongodb.client.model.Updates.set;
 /**
  * Implemented User DAO for user data querying, login/register services.
  */
-public class UserDaoImpl extends AbstractDatabaseDao implements UserDAO{
+public class UserDaoImpl extends AbstractDatabaseDao {
     private final String userName;
     private String password;
     private final MongoCollection<User> collection;
@@ -54,7 +54,6 @@ public class UserDaoImpl extends AbstractDatabaseDao implements UserDAO{
      *
      * @return User obj iff password is correct
      */
-    @Override
     public User queryUser() {
         if(checkPassword()){
             return collection.find(eq(Constants.USERNAME, this.userName)).first();
@@ -67,7 +66,6 @@ public class UserDaoImpl extends AbstractDatabaseDao implements UserDAO{
      *
      * @return true iff the username is ControlPresentInfo the DB, otherwise, false
      */
-    @Override
     public Boolean queryUserInDB() {
         return collection.find(this.filter).first() != null;
 
@@ -78,7 +76,6 @@ public class UserDaoImpl extends AbstractDatabaseDao implements UserDAO{
      *
      * @return user's role
      */
-    @Override
     public String queryUserRole() {
         return this.queryByUserName().getUserRole();
     }
@@ -88,7 +85,6 @@ public class UserDaoImpl extends AbstractDatabaseDao implements UserDAO{
      *
      * @return user's course list
      */
-    @Override
     public ArrayList<String> queryCourseList() {
         return this.queryByUserName().getCourseList();
     }
@@ -98,7 +94,6 @@ public class UserDaoImpl extends AbstractDatabaseDao implements UserDAO{
      *
      * @return user's wish list
      */
-    @Override
     public ArrayList<String> queryWishList() {
         return this.queryByUserName().getWishList();
 
@@ -109,7 +104,6 @@ public class UserDaoImpl extends AbstractDatabaseDao implements UserDAO{
      *
      * @return user's schedule list with no schedule map ControlPresentInfo the schedule object.
      */
-    @Override
     public ArrayList<Schedule> queryScheduleList() {
         return this.queryByUserName().getScheduleList();
     }
@@ -120,7 +114,6 @@ public class UserDaoImpl extends AbstractDatabaseDao implements UserDAO{
      * @param courseList User course list
      * @return ture iff the update is successful
      */
-    @Override
     public boolean updateCourseList(ArrayList<String> courseList) {
         this.collection.updateOne(this.filter, set(Constants.COURSE_LIST, courseList));
         return true;
@@ -132,7 +125,6 @@ public class UserDaoImpl extends AbstractDatabaseDao implements UserDAO{
      * @param wishList User wish list
      * @return ture iff the update is successful
      */
-    @Override
     public boolean updateWishList(ArrayList<String> wishList) {
         this.collection.updateOne(this.filter, set(Constants.WISH_LIST, wishList));
         return true;
@@ -144,7 +136,6 @@ public class UserDaoImpl extends AbstractDatabaseDao implements UserDAO{
      * @param scheduleList list of schedule
      * @return ture iff the update is successful
      */
-    @Override
     public boolean updateScheduleList(ArrayList<Schedule> scheduleList) {
         this.collection.updateOne(this.filter, set(Constants.SCHEDULE_LIST, scheduleList));
         return true;
@@ -155,7 +146,6 @@ public class UserDaoImpl extends AbstractDatabaseDao implements UserDAO{
      *
      * @return ArrayList of User Review entity.
      */
-    @Override
     public ArrayList<UserReview> queryUserReviewList() {
         return this.queryByUserName().getReviewList();
     }
@@ -166,7 +156,6 @@ public class UserDaoImpl extends AbstractDatabaseDao implements UserDAO{
      * @param reviewList list of UserReviews
      * @return true iff teh update is successful
      */
-    @Override
     public boolean updateUserReviewList(ArrayList<UserReview> reviewList) {
         this.collection.updateOne(this.filter, set(Constants.REVIEW_LIST, reviewList));
         return true;
@@ -177,7 +166,6 @@ public class UserDaoImpl extends AbstractDatabaseDao implements UserDAO{
      *
      * @return true iff register is successful, otherwise, false
      */
-    @Override
     public Boolean userRegister() {
         if (!queryUserInDB()){
             User user = new User(this.userName, this.password);
@@ -192,7 +180,6 @@ public class UserDaoImpl extends AbstractDatabaseDao implements UserDAO{
      *
      * @return ture iff login is successful, otherwise, false.
      */
-    @Override
     public Boolean userLogin() {
         if (queryUserInDB()){return checkPassword();} return false;
     }
