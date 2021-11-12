@@ -3,14 +3,16 @@ package com.courseApp.dao;
 import com.courseApp.entity.Schedule;
 import com.courseApp.entity.User;
 import com.courseApp.entity.UserReview;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.ArrayList;
 
 /**
  * UserDAO interface for querying user data, register action and login action.
  */
-public interface UserDAO {
+public interface UserDAO extends MongoRepository<User, String> {
 
+    User findByUsername(String username);
     /**
      * Return a User obj, syncing with the database iff the password is correct.
      *

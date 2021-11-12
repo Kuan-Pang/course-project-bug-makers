@@ -7,6 +7,9 @@ import com.courseApp.entity.UserReview;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.conversions.Bson;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
@@ -17,12 +20,19 @@ import static com.mongodb.client.model.Updates.set;
 /**
  * Implemented User DAO for user data querying, login/register services.
  */
+@EnableMongoRepositories
+@Component
 public class UserDaoImpl extends AbstractDatabaseDao {
-    private final String userName;
+    private  String userName;
     private String password;
-    private final MongoCollection<User> collection;
-    private final Bson filter;
+    private  MongoCollection<User> collection;
+    private  Bson filter;
 
+    @Autowired
+    private UserDAO userDao;
+
+    public UserDaoImpl() {
+    }
 
     /**
      * Constructor taking ControlPresentInfo username and password, for register/login service.
@@ -55,10 +65,11 @@ public class UserDaoImpl extends AbstractDatabaseDao {
      * @return User obj iff password is correct
      */
     public User queryUser() {
-        if(checkPassword()){
-            return collection.find(eq(Constants.USERNAME, this.userName)).first();
-        }
-        return null;
+//        if(checkPassword()){
+//            return collection.find(eq(Constants.USERNAME, this.userName)).first();
+//        }
+//        return null;
+        return userDao.findByUsername("t1");
     }
 
     /**
