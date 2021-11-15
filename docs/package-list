@@ -5,6 +5,10 @@ com.courseApp.courseService
 com.courseApp.dao
 com.courseApp.driver.cmdline
 com.courseApp.driver.cmdline.commands
+com.courseApp.driver.cmdline.commands.CalendarServiceCommand
+com.courseApp.driver.cmdline.commands.CourseServiceCommand
+com.courseApp.driver.cmdline.commands.ReviewServiceCommand
+com.courseApp.driver.cmdline.commands.UserServiceCommand
 com.courseApp.entity
 com.courseApp.reviewService
 com.courseApp.userService
