@@ -1,0 +1,11 @@
+com.courseApp
+com.courseApp.calendarService
+com.courseApp.constants
+com.courseApp.courseService
+com.courseApp.dao
+com.courseApp.driver.cmdline
+com.courseApp.driver.cmdline.commands
+com.courseApp.entity
+com.courseApp.reviewService
+com.courseApp.userService
+com.courseApp.utils
