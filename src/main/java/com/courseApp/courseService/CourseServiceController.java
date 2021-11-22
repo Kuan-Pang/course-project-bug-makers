@@ -1,13 +1,9 @@
 package com.courseApp.courseService;
 
-import com.courseApp.calendarService.CalendarPresenter;
 import com.courseApp.constants.Constants;
 import com.courseApp.entity.Schedule;
-import com.courseApp.userService.UserRequestProcessor;
-import com.courseApp.userService.UserServiceController;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -71,7 +67,7 @@ public class CourseServiceController implements ControlPresentInformation, Contr
                 .append(Constants.TRI_TAB).append(Constants.SECTION).append(Constants.CHANGE_LINE);
 
         // Generate sections.
-        for(var entry : cig.getCourseSectionScheduleMap().entrySet()){
+        for(Map.Entry<String, Map<String, ArrayList<String>>> entry : cig.getCourseSectionScheduleMap().entrySet()){
             result.append(Constants.TRI_TAB).append(Constants.TRI_TAB);
             result.append(entry.getKey()).append(Constants.TRI_TAB).append(entry.getValue());
             Map<String, String> tempMap = cig.getCourseSectionInstructorMap();
@@ -116,25 +112,19 @@ public class CourseServiceController implements ControlPresentInformation, Contr
      * Plan the schedule for user with given username and password.
      * Course planning will base on courseList, then wishList with courseList at a higher priority
      * and wishList at a lower priority.
-     *
+     * <p>
      * Planned schedule should be added to scheduleList iff the planning is not successful.
-     *
+     * <p>
      * Return the planned schedule list String iff the planning is successful, otherwise, null.
      *
      * @param username username
      * @return schedule list String
+     * @throws Throwable exceptions
      */
 
     @Override
-    public String planCourse(String username) {
-        Schedule schedule = new CoursePlanner(username).generateSchedule();
-        new UserRequestProcessor(username).insertOneSchedule(schedule);
-        return schedule.getSectionList().toString();
+    public String planCourse(String username) throws Throwable {
+        return new CoursePlanner(username).generateSchedule().toString();
     }
-
-//    public static void main(String[] args) throws Throwable {
-//        CourseServiceController csc = new CourseServiceController();
-//        System.out.println(csc.getSectionInformation("CSC207FLEC0101"));
-//    }
 
 }
