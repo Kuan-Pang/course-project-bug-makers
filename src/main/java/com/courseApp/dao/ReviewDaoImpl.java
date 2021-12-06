@@ -66,7 +66,6 @@ public class ReviewDaoImpl extends AbstractDatabaseDao implements ReviewDAO{
 
     /**
      * Query User Review by given course code, instructor name and username
-     * <p>
      * Note that, one user shall only write one per instructor.
      * So there should be only one review under each username per instructor.
      *
@@ -135,16 +134,5 @@ public class ReviewDaoImpl extends AbstractDatabaseDao implements ReviewDAO{
     }
 
 
-//    public static void main(String[] args) {
-//        ReviewDaoImpl rdi = new ReviewDaoImpl();
-//        rdi.createCourseReview("CSC207");
-//        rdi.createInstReview("CSC207", "test");
-//        UserReview ur = new UserReview("username", 1.0D, 1.0D, 1.0D, "GOOD");
-//        ArrayList<UserReview> urList = new ArrayList<>();
-//        urList.add(ur);
-//        urList.add(ur);
-//        rdi.UpdateUserReviewList("CSC207", "test", urList);
-//        System.out.println(rdi.queryExistingCourse());
-//    }
 }
 

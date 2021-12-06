@@ -25,6 +25,7 @@ public class CourseReview {
      * @param courseDifficultyRate course difficulty rate
      * @param courseGeneralRate course general rate
      * @param instReviewMap instructor map
+     * @param instList list of instructor
      */
     @BsonCreator
     public CourseReview(@BsonProperty(Constants.COURSE_CODE_DB) String courseCode,
@@ -60,7 +61,7 @@ public class CourseReview {
      */
     public void updateCourseDifficultyRate(){
         double res = 0.0D;
-        for (var entry: this.instReviewMap.entrySet()){
+        for (Map.Entry<String, InstReview> entry: this.instReviewMap.entrySet()){
             res += entry.getValue().getInstDifficultyRate();
         }
         if(res > 0){
@@ -72,7 +73,7 @@ public class CourseReview {
      */
     public void updateCourseGeneralRate(){
         double res = 0;
-        for (var entry: this.instReviewMap.entrySet()){
+        for (Map.Entry<String, InstReview> entry: this.instReviewMap.entrySet()){
             res += entry.getValue().getInstGeneralRate();
         }
         if(res > 0){

@@ -56,12 +56,11 @@ public class CourseDaoImpl implements CourseDAO {
 
 
     /**
-     * Return URL for querying the course information.
+     * Set URL for querying the course information.
      * courseCode must end with the term indicator, i.e., F/S/Y,
      * otherwise throw WRONG_COURSE_CODE_FORMAT exception.
      */
-    @Override
-    public void generateQuery() throws Throwable {
+    private void generateQuery() throws Throwable {
         if (this.courseTerm.equals(Constants.WINTER_TERM) | this.courseTerm.equals(Constants.FALL_TERM) | this.courseTerm.equals(Constants.YEAR)) {
             String res = Constants.UT_API_URL.replace(Constants.COURSE_CODE, this.courseCode.substring(0,
                     this.courseCode.length() - 1));
@@ -76,8 +75,7 @@ public class CourseDaoImpl implements CourseDAO {
      * Setter method for converting Json response from the API to a map instance variable.
      */
     @SuppressWarnings({"unchecked", "SuspiciousMethodCalls"})
-    @Override
-    public void setMap() throws Throwable {
+    private void setMap() throws Throwable {
         this.generateQuery();
         String webContent = UrlReader.read(this.url);
         this.map = new Gson().fromJson(JsonParser.parseString(webContent), Map.class);
@@ -140,7 +138,7 @@ public class CourseDaoImpl implements CourseDAO {
 
     /** Query method, returns the schedule for each section.
      *
-     * Structure should be like: Map(section -> Map(weekday -> ArrayList(timing)))
+     * Structure should be like: Map(section - Map(weekday - ArrayList(timing)))
      *
      *
      * @return schedule for each section.
@@ -157,7 +155,7 @@ public class CourseDaoImpl implements CourseDAO {
                     sectionMap.get(section)).get(Constants.SCHEDULE);
             Map<String, ArrayList<String>> sectionSpecific = new HashMap<>();
             // loop over the meeting time
-            for (var entry : sectionDetail.entrySet()){
+            for (Map.Entry<String, Object> entry : sectionDetail.entrySet()){
                 ArrayList<String> meetingTimes = new ArrayList<>();
                 meetingTimes.add( (String)((Map<String, Object>)entry.getValue()).get(Constants.MEETING_START_TIME));
                 meetingTimes.add( (String) ((Map<String, Object>)entry.getValue()).get(Constants.MEETING_END_TIME));
@@ -186,7 +184,7 @@ public class CourseDaoImpl implements CourseDAO {
             Map<String, Object> sectionDetail = (Map<String, Object>) ((Map<String, Object>)
                     sectionMap.get(section)).get(Constants.INSTRUCTOR);
             StringBuilder sb = new StringBuilder();
-            for (var entry: sectionDetail.entrySet()){
+            for (Map.Entry<String, Object> entry: sectionDetail.entrySet()){
                 // loop over the instructor list
                 sb.append(((Map<String, Object>)  entry.getValue()).get(Constants.FIRST_NAME));
                 sb.append(Constants.INSTRUCTOR_SPLIT);
@@ -218,17 +216,6 @@ public class CourseDaoImpl implements CourseDAO {
         return description.replace(Constants.DESCRIPTION_FORMATTER_1,
                 "").replace(Constants.DESCRIPTION_FORMATTER_2, "");
     }
-
-
-
-//    public static void main(String[] args) throws Throwable {
-//        System.out.println(1);
-//        CourseDaoImpl cdi = new CourseDaoImpl("CSC207F");
-//        Map<String, String> res = cdi.querySectionInstructorMap();
-//        System.out.println(res);
-//    }
-
-
 
 
 }

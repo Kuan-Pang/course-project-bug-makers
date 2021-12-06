@@ -54,7 +54,7 @@ public class Schedule {
     /**
      * Getting schedule map.
      *
-     * The map must be ControlPresentInfo format: Map(courseCodeW/Section -> Map(weekDay -> ArrayList(schedule)))
+     * The map must be ControlPresentInfo format: Map(courseCodeW/Section - Map(weekDay - ArrayList(schedule)))
      *
      * @return map of schedules
      */
@@ -66,7 +66,7 @@ public class Schedule {
     public String toString() {
         if(this.scheduleMap != null){
         StringBuilder sb = new StringBuilder(this.getSectionList().toString()).append(Constants.CHANGE_LINE);
-        for(var entry : this.getScheduleMap().entrySet()){
+        for(Map.Entry<String, Map<String, ArrayList<String>>> entry : this.getScheduleMap().entrySet()){
             sb.append(entry.getKey()).append(Constants.CHANGE_LINE).append(Constants.TRI_TAB);
             sb.append(entry.getValue()).append(Constants.CHANGE_LINE);
         }

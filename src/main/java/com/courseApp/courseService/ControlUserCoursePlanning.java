@@ -5,5 +5,18 @@ package com.courseApp.courseService;
  */
 public interface ControlUserCoursePlanning {
 
-    String planCourse(String username);
+    /**
+     * Plan the schedule for user with given username and password.
+     * Course planning will base on courseList, then wishList with courseList at a higher priority
+     * and wishList at a lower priority.
+     *
+     * Planned schedule should be added to scheduleList iff the planning is not successful.
+     *
+     * Return the planned schedule list String iff the planning is successful, otherwise, null.
+     *
+     * @param username username
+     * @throws Exception exception
+     * @return schedule list String
+     */
+    String planCourse(String username) throws Throwable;
 }

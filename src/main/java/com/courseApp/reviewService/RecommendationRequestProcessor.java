@@ -1,10 +1,14 @@
 package com.courseApp.reviewService;
 
 import com.courseApp.constants.Constants;
+import com.courseApp.dao.InferenceDaoImpl;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Recommendation Request Processor for recommendation score update.
+ */
 public class RecommendationRequestProcessor implements UseRecommendationUpdate, UseInferenceScore{
     /**
      * generate a complex recommendation map by ratio in the recommendation map.
@@ -20,7 +24,7 @@ public class RecommendationRequestProcessor implements UseRecommendationUpdate, 
     @Override
     public Map<String, Double> generateComplexScoreMap(Map<String, Map<String, Double>> recommendationMap) {
         Map<String, Double> res = new HashMap<>();
-        for(var entry : recommendationMap.entrySet()){
+        for(Map.Entry<String, Map<String, Double>> entry : recommendationMap.entrySet()){
             Map<String, Double> instMap = entry.getValue();
             Double generalRate = instMap.get(Constants.GENERAL_RATE);
             Double recommendationScore = instMap.get(Constants.RECOMMENDATION_SCORE);
@@ -37,7 +41,14 @@ public class RecommendationRequestProcessor implements UseRecommendationUpdate, 
      * @return text recommendation score in double format
      */
     @Override
-    public double modelInference(String reviewString) {
-        return 0; //TODO
+    public double modelInference(String reviewString) throws Exception {
+
+        return new InferenceDaoImpl().modelInference(reviewString);
     }
+
+
+
+
+
+
 }
